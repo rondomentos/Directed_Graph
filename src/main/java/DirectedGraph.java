@@ -2,32 +2,80 @@ import java.util.*;
 
 public class DirectedGraph {
 
-    private HashMap<Vertex, List<Edge>> vertexMap = new HashMap<Vertex, List<Edge>>();
+    private LinkedHashMap<String, List<Edge>> vertexMap = new LinkedHashMap<String, List<Edge>>();
 
-   public void changeVertexName(Vertex vertex, String name){
-       vertex.setVertexName(name);
-   }
+    public void changeVertexName(Vertex vertex, String name) {
+        List<Edge> value = vertexMap.get(vertex.getVertexName());
+        vertexMap.remove(vertex.getVertexName());
+        vertexMap.put(name, value);
+    }
 
-   public void changeEdgeWeight(String v1, String v2, int weight, int newWeight){
-       Edge edge = new Edge(getKey(v1), getKey(v2), weight);
-       edge.setWeight(newWeight);
-   }
-
-    public void addVertex(String vertexName) {
-        if (!vertexExist(vertexName)) {
-            vertexMap.put(new Vertex(vertexName), new ArrayList<Edge>());
+    public void changeVertexName(String prevName, String newName) {
+        List<Edge> value = vertexMap.get(prevName);
+        vertexMap.remove(prevName);
+        vertexMap.put(newName, value);
+    }
+    
+    public void changeEdgeWeight(String v1, String v2, int newWeight) {
+        //Edge edge = vertexMap.get(v1);
+        for (String key: getKeys()) {
+            if (key.equals(v1))
+            for (Edge edge: vertexMap.get(key)) {
+                if (edge.getSecondNode().getVertexName().equals(v2)) edge.setWeight(newWeight);
+            }
         }
+        //edge.setWeight(newWeight);
+    }
+
+    public void changeEdgeWeight(Edge edge, int newWeight) {
+        edge.setWeight(newWeight);
+    }
+    
+    public List getEdgeInputs(String v){
+        List edgeList = new ArrayList();
+        for (String key: getKeys()) {
+            for (Edge edge: vertexMap.get(key)) {
+                if (edge.getSecondNode().equals(new Vertex(v))){
+                    edgeList.add(edge);
+                }
+            }
+        }
+        return edgeList;
+    }
+    
+    public List getEdgeOutputs(String v){
+        return vertexMap.get(v);
+    }
+
+    public void deleteVertex(String v){
+        vertexMap.remove(v);
+    }
+
+    public void deleteEdge(Edge edge){
+        for (String key : getKeys()) {
+            for (Edge e: vertexMap.get(key)) {
+                if (e.equals(edge)) vertexMap.remove(key);
+            }
+        }
+
+    }
+
+    public Vertex addVertex(String vertexName) {
+        Vertex vertex = new Vertex(vertexName);
+        if (!vertexExist(vertexName)) {
+            vertexMap.put(vertexName, new ArrayList<Edge>());
+        }
+        return vertex;
     }
 
     public boolean vertexExist(String vertexName) {
-        if (getKey(vertexName) == null) return false;
-        return vertexMap.containsKey(getKey(vertexName));
+        return vertexMap.containsKey(vertexName);
     }
 
     public boolean edgeExist(String firstVertex, String secondVertex) {
         // Edge edge = new Edge(firstVertex, secondVertex);
         if (!vertexExist(firstVertex) || !vertexExist(secondVertex)) return false;
-        List<Edge> edges = vertexMap.get(getKey(firstVertex));
+        List<Edge> edges = vertexMap.get(firstVertex);
         for (Edge edge : edges) {
             if (edge.getFirstNode().getVertexName().equals(firstVertex) &&
                     edge.getSecondNode().getVertexName().equals(secondVertex)) return true;
@@ -40,55 +88,37 @@ public class DirectedGraph {
         //if (!edgeExist(vertex1, vertex2)) {
         if (!vertexExist(firstVertex)) addVertex(firstVertex);
         if (!vertexExist(secondVertex)) addVertex(secondVertex);
-        Vertex vertex1 = getKey(firstVertex);
-        Vertex vertex2 = getKey(secondVertex);
         List<Edge> edges = getValue(firstVertex);
-        edges.add(new Edge(vertex1, vertex2, weight));
+        edges.add(new Edge(firstVertex, secondVertex, weight));
         //Collections.sort(edges);
         //}
     }
 
-    public Map<Vertex, List<Edge>> getGraph() {
+    public Map<String, List<Edge>> getGraph() {
         return vertexMap;
     }
 
-    private List<List<Edge>> getValues() {
-        List<List<Edge>> values = new ArrayList<List<Edge>>();
-        for (Vertex key : getKeys()) {
-            values.add(vertexMap.get(key));
-        }
-        return values;
-    }
-
-    public Vertex getKey(String vertexName) {
-
-        for (Vertex key : getKeys()) {
-            if (key.getVertexName().equals(vertexName)) return key;
-        }
-        return null;
-    }
-
-    public List<Edge> getValue(String name) {
+    private List<Edge> getValue(String name) {
         List<Edge> value = new ArrayList<Edge>();
-        for (Vertex key : getKeys()) {
-            if (key.getVertexName().equals(name)) value = vertexMap.get(key);
+        for (String key : getKeys()) {
+            if (key.equals(name)) value = vertexMap.get(key);
         }
         return value;
     }
 
-    private List<Vertex> getKeys() {
-        return new ArrayList<Vertex>(vertexMap.keySet());
+    private List<String> getKeys() {
+        return new ArrayList<String>(vertexMap.keySet());
     }
 
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        for (Vertex key : getKeys()) {
-            sb.append(key.getVertexName() + ":\n");
+        for (String key : getKeys()) {
+            sb.append(key).append(":\n");
             for (Edge edge : vertexMap.get(key)) {
-                //for (Edge edge: value) {
-                sb.append(" -> " + edge.getSecondNode().getVertexName() + " (W: " + edge.getWeight() + ");\n");
-                //}
+                sb.append(" -> ").append(
+                        edge.getSecondNode().getVertexName()).append(" (Weight: ").append(
+                        edge.getWeight()).append(");\n");
 
             }
         }
@@ -97,12 +127,12 @@ public class DirectedGraph {
 
 
     @Override
-    public int hashCode(){
+    public int hashCode() {
         return 32 + this.getGraph().hashCode() * 8;
     }
 
     @Override
-    public boolean equals(Object o){
+    public boolean equals(Object o) {
         if (o == null) return false;
         if (!o.equals(this)) return false;
         if (o.getClass() != this.getClass()) return false;

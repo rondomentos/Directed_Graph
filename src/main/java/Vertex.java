@@ -28,7 +28,6 @@ public class Vertex {
     @Override
     public boolean equals(Object o){
         if (o == null) return false;
-        if (!o.equals(this)) return false;
         if (o.getClass() != this.getClass()) return false;
         Vertex vertex = (Vertex) o;
         return vertex.getVertexName().equals(this.getVertexName());

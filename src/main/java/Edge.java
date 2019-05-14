@@ -4,7 +4,9 @@ public class Edge {
     private Vertex firstNode;
     private Vertex secondNode;
 
-    public Edge(Vertex firstNode, Vertex secondNode, Integer weight) {
+    public Edge(String  v1, String v2, Integer weight) {
+        Vertex firstNode = new Vertex(v1);
+        Vertex secondNode = new Vertex(v2);
         this.weight = weight;
         this.firstNode = firstNode;
         this.secondNode = secondNode;
@@ -14,7 +16,6 @@ public class Edge {
         this.firstNode = firstNode;
         this.secondNode = secondNode;
     }
-
 
     public Integer getWeight() {
         return weight;
@@ -53,7 +54,6 @@ public class Edge {
     @Override
     public boolean equals(Object o){
         if (o == null) return false;
-        if (!o.equals(this)) return false;
         if (o.getClass() != this.getClass()) return false;
         Edge edge = (Edge) o;
         return edge.getFirstNode().equals(this.getFirstNode())

@@ -1,11 +1,16 @@
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+
 public class GraphTest {
 
 
     @Test
-    public void test(){
+    public void addingElementsTest(){
         DirectedGraph directedGraph = new DirectedGraph();
         directedGraph.addEdge("a1", "a2", 2);
         directedGraph.addVertex("b1");
@@ -19,27 +24,25 @@ public class GraphTest {
         directedGraph.addEdge("b1", "b6", 7);
         directedGraph.addEdge("b1", "b7", 1);
 
-        System.out.println(directedGraph.toString());
-
-        Assert.assertEquals("b4:\n" +
-                "b1:\n" +
-                " -> b2 (W: 2);\n" +
-                " -> b3 (W: 1);\n" +
-                " -> b4 (W: 5);\n" +
-                " -> b5 (W: 2);\n" +
-                " -> b6 (W: 7);\n" +
-                " -> b7 (W: 1);\n" +
-                "b3:\n" +
-                "a1:\n" +
-                " -> a2 (W: 2);\n" +
-                "b2:\n" +
+        Assert.assertEquals("a1:\n" +
+                " -> a2 (Weight: 2);\n" +
                 "a2:\n" +
+                "b1:\n" +
+                " -> b2 (Weight: 2);\n" +
+                " -> b3 (Weight: 1);\n" +
+                " -> b4 (Weight: 5);\n" +
+                " -> b5 (Weight: 2);\n" +
+                " -> b6 (Weight: 7);\n" +
+                " -> b7 (Weight: 1);\n" +
+                "b2:\n" +
                 "c1:\n" +
-                " -> c2 (W: 4);\n" +
+                " -> c2 (Weight: 4);\n" +
+                "c2:\n" +
+                "b3:\n" +
+                "b4:\n" +
                 "b5:\n" +
-                "b7:\n" +
                 "b6:\n" +
-                "c2:\n", directedGraph.toString());
+                "b7:\n", directedGraph.toString());
     }
 
     @Test
@@ -54,6 +57,71 @@ public class GraphTest {
         Assert.assertFalse(directedGraph.edgeExist("0", "1"));
     }
 
+    @Test
+    public void equalsTest(){
+        Vertex firstV = new Vertex("a");
+        Vertex secondV = new Vertex("a");
+        Assert.assertEquals(firstV, secondV);
+        secondV = new Vertex("b");
+        Assert.assertNotEquals(firstV, secondV);
+        Edge firstE = new Edge(firstV.getVertexName(),secondV.getVertexName(), 1);
+        Edge secondE = new Edge(firstV.getVertexName(),secondV.getVertexName(), 1);
+        Assert.assertEquals(firstE,secondE);
+        secondE = new Edge(firstV.getVertexName(), secondV.getVertexName(), 2);
+        Assert.assertNotEquals(firstE,secondE);
+        secondE = new Edge(firstV.getVertexName(), firstV.getVertexName(), 1);
+        Assert.assertNotEquals(firstE,secondE);
 
+    }
+
+    @Test
+    public void gettingEdgeInpOrOutp(){
+        DirectedGraph directedGraph = new DirectedGraph();
+        directedGraph.addVertex("in1");
+        directedGraph.addVertex("in2");
+        directedGraph.addEdge("in1", "out1", 1);
+        directedGraph.addEdge("in1", "out2", 1);
+        directedGraph.addEdge("in1", "out3", 1);
+        directedGraph.addEdge("in2", "out2", 2);
+        directedGraph.addEdge("in3", "out2", 2);
+        directedGraph.addEdge("in4", "out2", 2);
+        System.out.println("directedGraph = " + directedGraph.getEdgeOutputs("in1"));
+        List<Edge> expected = new ArrayList<Edge>();
+        expected.add(new Edge("in1", "out1", 1));
+        expected.add(new Edge("in1", "out2", 1));
+        expected.add(new Edge("in1", "out3", 1));
+        Assert.assertEquals(expected, directedGraph.getEdgeOutputs("in1"));
+        expected = new ArrayList<Edge>();
+        expected.add(new Edge("in1", "out2", 1));
+        expected.add(new Edge("in2", "out2", 2));
+        expected.add(new Edge("in3", "out2", 2));
+        expected.add(new Edge("in4", "out2", 2));
+        Assert.assertEquals(expected, directedGraph.getEdgeInputs("out2"));
+    }
+
+    @Test
+    public void deletingElementsTest(){
+        DirectedGraph directedGraph = new DirectedGraph();
+        directedGraph.addVertex("a");
+        Assert.assertTrue(directedGraph.vertexExist("a"));
+        directedGraph.deleteVertex("a");
+        Assert.assertFalse(directedGraph.vertexExist("a"));
+        directedGraph.addEdge("a", "b", 10);
+        Assert.assertTrue(directedGraph.edgeExist("a", "b"));
+        directedGraph.deleteEdge(new Edge("a", "b", 10));
+        Assert.assertFalse(directedGraph.edgeExist("a", "b"));
+    }
+
+    @Test
+    public void changingElementsTest(){
+        DirectedGraph directedGraph = new DirectedGraph();
+        directedGraph.addVertex("a");
+        directedGraph.changeVertexName("a", "b");
+        Assert.assertEquals("b:\n", directedGraph.toString());
+        directedGraph.addEdge("c", "b", 128);
+        directedGraph.changeEdgeWeight("c", "b", 1488);
+        Assert.assertEquals("b:\nc:\n"+
+                " -> b (Weight: 1488);\n", directedGraph.toString());
+    }
 
 }
