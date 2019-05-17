@@ -2,7 +2,7 @@ public class Vertex {
 
     private String vertexName;
 
-    public Vertex(String vertexName){
+    public Vertex(String vertexName) {
 
         this.vertexName = vertexName;
     }
@@ -17,17 +17,20 @@ public class Vertex {
     }
 
     @Override
-    public String toString(){
+    public String toString() {
         return vertexName;
-    }
-    @Override
-    public int hashCode(){
-        return 32 + this.getVertexName().hashCode() * 8;
     }
 
     @Override
-    public boolean equals(Object o){
+    public int hashCode() {
+        return 32 + this.getVertexName().hashCode() * 8;
+    }
+
+
+    @Override
+    public boolean equals(Object o) {
         if (o == null) return false;
+        if (this == null) return false;
         if (o.getClass() != this.getClass()) return false;
         Vertex vertex = (Vertex) o;
         return vertex.getVertexName().equals(this.getVertexName());

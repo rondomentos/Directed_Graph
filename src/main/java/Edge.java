@@ -4,7 +4,7 @@ public class Edge {
     private Vertex firstNode;
     private Vertex secondNode;
 
-    public Edge(String  v1, String v2, Integer weight) {
+    public Edge(String v1, String v2, Integer weight) {
         Vertex firstNode = new Vertex(v1);
         Vertex secondNode = new Vertex(v2);
         this.weight = weight;
@@ -43,21 +43,33 @@ public class Edge {
 
     @Override
     public String toString() {
-        return firstNode.toString() + " -> " + secondNode.toString() + " (W: " + weight + ");";
+        String s = "";
+        if (secondNode.toString() != null && firstNode.toString() != null) {
+            s = firstNode.toString() + ":\n -> " + secondNode.toString() + " (Weight: " + weight + ");\n";
+        }
+
+        return s;
     }
 
     @Override
-    public int hashCode(){
+    public int hashCode() {
         return 8 * (this.getWeight().hashCode() + this.getFirstNode().hashCode() + this.getFirstNode().hashCode());
     }
 
     @Override
-    public boolean equals(Object o){
+    public boolean equals(Object o) {
         if (o == null) return false;
         if (o.getClass() != this.getClass()) return false;
         Edge edge = (Edge) o;
-        return edge.getFirstNode().equals(this.getFirstNode())
-                && edge.getSecondNode().equals(this.getSecondNode())
+        if (edge.getFirstNode() == null) return false;
+        if (edge.getSecondNode().getVertexName() == null && this.getSecondNode().getVertexName() == null) {
+            if (edge.getFirstNode().getVertexName().equals(this.getFirstNode().getVertexName())) {
+                return true;
+            }
+        } else if (edge.getSecondNode().getVertexName() == null
+                || this.getSecondNode().getVertexName() == null) return false;
+        return edge.getFirstNode().getVertexName().equals(this.getFirstNode().getVertexName())
+                && edge.getSecondNode().getVertexName().equals(this.getSecondNode().getVertexName())
                 && edge.getWeight().equals(this.getWeight());
     }
 }
