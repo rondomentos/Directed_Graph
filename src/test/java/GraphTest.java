@@ -2,8 +2,6 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 public class GraphTest {
@@ -23,9 +21,12 @@ public class GraphTest {
         directedGraph.addEdge("b1", "b5", 2);
         directedGraph.addEdge("b1", "b6", 7);
         directedGraph.addEdge("b1", "b7", 1);
-
+        directedGraph.addVertex("0000");
         Assert.assertEquals("a1:\n" +
                 " -> a2 (Weight: 2);\n" +
+                "b1\n" +
+                "b2\n" +
+                "c1\n" +
                 "c1:\n" +
                 " -> c2 (Weight: 4);\n" +
                 "b1:\n" +
@@ -39,7 +40,9 @@ public class GraphTest {
                 "b1:\n" +
                 " -> b6 (Weight: 7);\n" +
                 "b1:\n" +
-                " -> b7 (Weight: 1);\n", directedGraph.toString());
+                " -> b7 (Weight: 1);\n" +
+                "0000\n", directedGraph.toString());
+        Assert.assertEquals("000", directedGraph.addVertex("000").getVertexName());
     }
 
     @Test
@@ -116,15 +119,11 @@ public class GraphTest {
         directedGraph.addEdge("a", "c", 1);
         Assert.assertTrue(directedGraph.edgeExists(new Edge("a", "c", 1)));
         directedGraph.changeVertexName("a", "b");
-        Assert.assertEquals("b:\n" +
-                " -> c (Weight: 1);\n", directedGraph.toString());
+        Assert.assertTrue(directedGraph.edgeExists(new Edge("b", "c", 1)));
         Assert.assertFalse(directedGraph.edgeExists(new Edge("a", "c", 1)));
         directedGraph.addEdge("c", "b", 128);
         directedGraph.changeEdgeWeight("c", "b", 128, 1488);
-        Assert.assertEquals("b:\n" +
-                " -> c (Weight: 1);\n" +
-                "c:\n" +
-                " -> b (Weight: 1488);\n", directedGraph.toString());
+        Assert.assertTrue(directedGraph.edgeExists(new Edge("c","b", 1488)));
     }
 
 }

@@ -12,10 +12,6 @@ public class Edge {
         this.secondNode = secondNode;
     }
 
-    public Edge(Vertex firstNode, Vertex secondNode) {
-        this.firstNode = firstNode;
-        this.secondNode = secondNode;
-    }
 
     public Integer getWeight() {
         return weight;
@@ -44,9 +40,10 @@ public class Edge {
     @Override
     public String toString() {
         String s = "";
+        String vertexOutput = firstNode.toString()+"\n";
         if (secondNode.toString() != null && firstNode.toString() != null) {
             s = firstNode.toString() + ":\n -> " + secondNode.toString() + " (Weight: " + weight + ");\n";
-        }
+        } else if (firstNode.toString() != null) s = vertexOutput;
 
         return s;
     }
